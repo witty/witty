@@ -29,7 +29,7 @@ class Witty_Base
 	/**
 	 * something to do after construct
 	 */
-	protected function _after_construct()
+	protected function _after_construct($id)
 	{
 	}
 

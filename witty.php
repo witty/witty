@@ -5,7 +5,7 @@
  * @dependency arr
  * @author lzyy http://blog.leezhong.com
  * @homepage https://github.com/witty/witty
- * @version 0.1.1
+ * @version 0.1.2
  */
 class Witty
 {
@@ -15,6 +15,8 @@ class Witty
 	protected static $_module_path;
 	protected static $_helper_path;
 	protected static $_vendor_path;
+
+	public static $is_cli = FALSE;
 
 	/**
 	 * init system
@@ -28,6 +30,9 @@ class Witty
 		Witty::$_module_path= realpath(dirname(__FILE__).'/../../modules').'/';
 		Witty::$_helper_path = realpath(dirname(__FILE__).'/../../helpers').'/';
 		Witty::$_vendor_path = realpath(dirname(__FILE__).'/../../vendors').'/';
+		if (PHP_SAPI == 'cli')
+			Witty::$is_cli = TRUE;
+
 		spl_autoload_register('Witty::autoload');
 		Witty::init_modules();
 
@@ -114,7 +119,7 @@ class Witty
 	 * @return object
 	 * @edit 0.1.1 add id param
 	 */
-	public static function factory($class, $id, $config = NULL)
+	public static function factory($class, $id = NULL, $config = NULL)
 	{
 		if (is_null($config))
 			$config = Witty::get_config($class);
@@ -128,15 +133,16 @@ class Witty
 	 * @param string $class class name
 	 * @param array $config class's config
 	 * @return object
+	 * @edit 0.1.2 add id item
 	 */
-	public static function instance($class, $config = NULL)
+	public static function instance($class, $id = NULL, $config = NULL)
 	{
 		static $classes = array();
 		if (is_null($config))
 			$config = Witty::get_config($class);
 		if (!isset($classes[$class]))
 		{
-			$classes[$class] = new $class($config);
+			$classes[$class] = new $class($config, $id);
 		}
 		return $classes[$class];
 	}
